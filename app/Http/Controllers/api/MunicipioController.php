@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Controllers;
-use App\Models\Municipio;
 use Illuminate\Http\Request;
+use App\Models\Municipio;
 use Illuminate\Support\Facades\DB;
+
 
 class MunicipioController extends Controller
 {
@@ -16,9 +16,10 @@ class MunicipioController extends Controller
     public function index()
     {
         $municipios  = DB::table('tb_municipio')
-        ->orderBy('muni_nomb')
+        ->join('tb_departamento', 'tb_municipio.depa_codi', '=', 'tb_departamento.depa_codi')
+        ->select('tb_municipio.*', 'tb_departamento.depa_nomb')
         ->get();
-        return json_encode(['municipios'=>$municipios]);
+        return view('municipio.index', ['municipios'=>$municipios]);
     }
 
     /**

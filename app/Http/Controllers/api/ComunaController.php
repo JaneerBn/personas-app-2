@@ -15,22 +15,12 @@ class ComunaController extends Controller
     public function index()
     {
         $comunas = DB::table('tb_comuna')
-         ->join('tb_municipio', 'tb_comuna.muni_codi', '=', 'tb_municipio.muni_codi')
-         ->select ('tb_comuna.*',"tb_municipio.muni_nomb" )
-         ->get();
-         return view('comuna.index', ['comunas'=>$comunas]);
-        
-    }
+            ->join('tb_municipio', 'tb_comuna.muni_codi', '=', 'tb_municipio.muni_codi')
+            ->select('tb_comuna.*', "tb_municipio.muni_nomb")
+            ->get();
+        return json_encode(['comunas' => $comunas]);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $municipios = DB::table('tb_municipio')
-        ->orderBy('muni_nomb')
-        ->get();
-        return view('comuna.new', ['municipios'=>$municipios]);
+
     }
 
     /**
@@ -38,16 +28,21 @@ class ComunaController extends Controller
      */
     public function store(Request $request)
     {
-        $comuna = new Comuna();
-        $comuna->comu_nomb = $request->name;
-        $comuna->muni_codi = $request->code;
-        $comuna->save();
 
-        $comunas = DB::table('tb_comuna')
-        ->join('tb_municipio', 'tb_comuna.muni_codi', '=', 'tb_municipio.muni_codi')
-        ->select('tb_comuna.*',"tb_municipio.muni_nomb")
-        ->get();
-         return view('comuna.index', ['comunas'=>$comunas]);
+     
+
+        $comuna = new Comuna();
+        $comuna->comu_nomb = $request->comu_nomb;
+        $comuna->muni_codi = $request->muni_codi;
+        $comuna->save();
+        return json_encode(['comuna' => $comuna]);
+
+
+       
+
+
+
+
     }
 
     /**
@@ -55,21 +50,18 @@ class ComunaController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
         $comuna = Comuna::find($id);
+        $municipios = DB::table('tb_municipio')
+            ->orderBy('muni_nomb')
+            ->get();
+        return json_encode(['comuna' => $comuna, 'municipios' => $municipios]);
 
-         $municipios = DB::table('tb_municipio')
-        ->orderBy('muni_nomb')
-        ->get();
-          return json_encode(['comuna' => $comuna, 'municipios' => $municipios]);
 
+
+        $comuna = Comuna::find($id);
+        if (is_null($comuna)) {
+            return abort(404);
+        }
     }
 
     /**
@@ -78,17 +70,18 @@ class ComunaController extends Controller
     public function update(Request $request, string $id)
     {
         $comuna = Comuna::find($id);
-
-        $comuna->comu_nomb = $request->name;
-        $comuna->muni_codi = $request->code;
+        $comuna->comu_nomb = $request->comu_nomb;
+        $comuna->muni_codi = $request->muni_codi;
         $comuna->save();
+        
+        return json_encode(['comuna' => $comuna]);
 
-        $comunas = DB::table('tb_comuna')
-            ->join('tb_municipio', 'tb_comuna.muni_codi', '=', 'tb_municipio.muni_codi')
-            ->select('tb_comuna.*', "tb_municipio.muni_nomb")
-            ->get();
+        
 
-        return view('comuna.index', ['comunas' => $comunas]);
+        $comuna = Comuna::find($id);
+        if (is_null($comuna)) {
+            return abort(404);
+        }
     }
 
     /**
@@ -98,12 +91,16 @@ class ComunaController extends Controller
     {
         $comuna = Comuna::find($id);
         $comuna->delete();
+        $comuna = DB::table('tb_comuna')
+            ->join('tb_municipio', 'tb_comuna.muni_codi', '=', 'tb_municipio.muni_codi')
+            ->select('tb_comuna.*', 'tb_municipio.muni_nomb')
+            ->get();
+        return json_encode(['comunas' => $comuna, 'success' => true]);
 
-        $comunas = DB::table('tb_comuna')
-        ->join('tb_municipio', 'tb_comuna.muni_codi', '=', 'tb_municipio.muni_codi')
-        ->select('tb_comuna.*', 'tb_municipio.muni_nomb')
-        ->get();
+        $comuna = Comuna::find($id);
+        if (is_null($comuna)) {
+            return abort(404);
+        }
 
-        return view('comuna.index', ['comunas' => $comunas]);
     }
 }

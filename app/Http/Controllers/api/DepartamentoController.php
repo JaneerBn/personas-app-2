@@ -26,7 +26,7 @@ class DepartamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $departamento = new departamento();
+        $departamento = new Departamento();
         $departamento->depa_nomb = $request->depa_nomb;
         $departamento->pais_codi = $request->pais_codi;
         $departamento->save();
@@ -38,11 +38,11 @@ class DepartamentoController extends Controller
      */
     public function show(string $id)
     {
-        $comuna = Comuna::find($id);
-        $municipios = DB::table('tb_municipio')
-            ->orderBy('muni_nomb')
+        $departamento = Departamento::find($id);
+        $paises = DB::table('tb_pais')
+            ->orderBy('pais_nomb')
             ->get();
-        return json_encode(['comuna' => $comuna, 'municipios' => $municipios]);
+        return json_encode(['departamento' => $departamento, 'paises' => $paises]);
     }
 
     /**
@@ -51,6 +51,14 @@ class DepartamentoController extends Controller
     public function update(Request $request, string $id)
     {
 
+        $departamento = Departamento::find($id);
+        $departamento->depa_nomb = $request->depa_nomb;
+        $departamento->pais_codi = $request->pais_codi;
+        $departamento->save();
+
+        return json_encode(['departamento' => $departamento]);
+
+
     }
 
     /**
@@ -58,6 +66,19 @@ class DepartamentoController extends Controller
      */
     public function destroy(string $id)
     {
+
+
+
+        $departamento = Departamento::find($id);
+        $departamento->delete();
+
+        $departamento = DB::table('tb_departamento')
+            ->join('tb_pais', 'tb_departamento.pais_codi', '=', 'tb_pais.pais_codi')
+            ->select('tb_departamento.*', 'tb_pais.pais_nomb')
+            ->get();
+
+        return json_encode(['departamentos' => $departamento, 'success' => true]);
+
 
     }
 }

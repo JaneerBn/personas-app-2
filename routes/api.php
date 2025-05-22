@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\api\DepartamentoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ComunaController;
 use App\Http\Controllers\api\MunicipioController;
+use App\Http\Controllers\api\DepartamentoController;
+use App\Http\Controllers\api\PaisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,10 @@ Route::put('/municipios/{municipio}', [MunicipioController::class, 'update'])->n
 
 
 Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos');
+
+Route::put('/departamentos/{departamento}', [DepartamentoController::class, 'update'])->name('departamentos.update');
+
+Route::post('/paises', [PaisController::class, 'store'])->name('paises.store');
+Route::get('/paises', [PaisController::class, 'index'])->name('paises');
+Route::get('/paises/{pais}', [PaisController::class, 'show'])->name('paises.show');
+Route::put('/paises/{pais}', [PaisController::class, 'update'])->name('paises.update');

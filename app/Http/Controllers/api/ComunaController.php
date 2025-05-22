@@ -68,9 +68,7 @@ class ComunaController extends Controller
          $municipios = DB::table('tb_municipio')
         ->orderBy('muni_nomb')
         ->get();
-
-         return view('comuna.edit', ['comuna' => $comuna, 'municipios' => $municipios]);
-
+          return json_encode(['comuna' => $comuna, 'municipios' => $municipios]);
 
     }
 
